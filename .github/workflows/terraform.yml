@@ -5,17 +5,22 @@ on:
     branches:
       - main
   workflow_dispatch:
-    paths:
-      - 'environments/dev/**'
-      - 'modules/**'
+
+concurrency:
+  group: terraform-dev
+  cancel-in-progress: true
 
 jobs:
   terraform:
+    name: Terraform Dev Deploy
     runs-on: ubuntu-latest
 
     defaults:
       run:
         working-directory: environments/dev
+
+    env:
+      TF_IN_AUTOMATION: true
 
     steps:
       - name: Checkout Code
@@ -23,6 +28,8 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.9
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -32,13 +39,16 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -reconfigure
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -var-file=dev.tfvars
+        run: terraform plan -input=false -lock-timeout=5m -var-file=dev.tfvars
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var-file=dev.tfvars
+        run: terraform apply -input=false -auto-approve -lock-timeout=5m -var-file=dev.tfvars
