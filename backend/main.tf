@@ -64,9 +64,9 @@ resource "aws_s3_bucket_logging" "terraform_state" {
 
 # Create DynamoDB table for state locking
 resource "aws_dynamodb_table" "terraform_locks" {
-  name           = "terraform-locks-${var.environment}"
-  billing_mode   = "PAY_PER_REQUEST"
-  hash_key       = "LockID"
+  name         = "terraform-locks-${var.environment}"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "LockID"
 
   attribute {
     name = "LockID"

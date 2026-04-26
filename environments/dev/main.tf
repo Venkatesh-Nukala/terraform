@@ -7,14 +7,14 @@ terraform {
     }
   }
 
-# Uncomment below to use S3 backend for state management
-   backend "s3" {
-     bucket         = "terraform-state-dev-160407533578"
-     key            = "dev/ec2/terraform.tfstate"
-     region         = "us-east-1"
-     encrypt        = true
-     dynamodb_table = "terraform-locks-dev"
-   }
+  # Uncomment below to use S3 backend for state management
+  backend "s3" {
+    bucket         = "terraform-state-dev-160407533578"
+    key            = "dev/ec2/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-locks-dev"
+  }
 }
 
 provider "aws" {
